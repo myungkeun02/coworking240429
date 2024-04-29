@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.myungkeun.coworking240429.domain.Member;
 import org.myungkeun.coworking240429.domain.Platform;
 import org.myungkeun.coworking240429.dto.request.MemberSignupRequest;
+import org.myungkeun.coworking240429.dto.response.IsDuplicateEmailResponse;
+import org.myungkeun.coworking240429.dto.response.IsDuplicateNicknameResponse;
 import org.myungkeun.coworking240429.dto.response.MemberSignupResponse;
 import org.myungkeun.coworking240429.exception.badRequest.DuplicateMemberException;
+import org.myungkeun.coworking240429.exception.badRequest.InvalidEmailException;
+import org.myungkeun.coworking240429.exception.badRequest.InvalidNicknameException;
 import org.myungkeun.coworking240429.exception.badRequest.InvalidPasswordException;
 import org.myungkeun.coworking240429.repository.MemberRepository;
 import org.myungkeun.coworking240429.service.MemberService;
@@ -51,6 +55,32 @@ public class MemberServiceImpl implements MemberService {
     private void validatePassword(String password) {
         if (!PASSWORD_REGEX.matcher(password).matches()) {
             throw new InvalidPasswordException();
+        }
+    }
+
+    @Override
+    public IsDuplicateEmailResponse isDuplicateEmail(String email) {
+        validEmail(email);
+        Boolean isPresent = memberRepository.existsByEmailAndPlatform(email, Platform.EMAIL);
+        return new IsDuplicateEmailResponse(isPresent);
+    }
+
+    private void validEmail(String email) {
+        if (email.isBlank()) {
+            throw new InvalidEmailException();
+        }
+    }
+
+    @Override
+    public IsDuplicateNicknameResponse isDuplicateNickname(String nickname) {
+        validNickname(nickname);
+        Boolean isPresent = memberRepository.existsByNickname(nickname);
+        return new IsDuplicateNicknameResponse(isPresent);
+    }
+
+    private void validNickname(String nickname) {
+        if (nickname.isBlank()) {
+            throw new InvalidNicknameException();
         }
     }
 }
