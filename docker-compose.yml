@@ -1,0 +1,17 @@
+version: "3"
+services:
+  database:
+    container_name: database
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: coworking
+      PGDATA: /data/database/coworking
+    volumes:
+      - database:/data/database
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+volumes:
+  database:
